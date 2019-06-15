@@ -11,7 +11,7 @@
 
 You can download the latest version by cloning the GitHub repository:
 
-	`git clone https://github.com/WhiteOnBlackCode/Domainator`
+	git clone https://github.com/WhiteOnBlackCode/Domainator
 
 Alternatively download a ZIP file containing the repository.
 
@@ -21,4 +21,4 @@ Alternatively download a ZIP file containing the repository.
 
 ### Usage
 
-	`python3 main.py`
+	python3 main.py

@@ -5,8 +5,10 @@
 FIX / Improve:
 - More exception handling
 - More logging
+- Multithread crawling
 
 New features:
+- Global subdomain variable
 - DNS Records
 - Zone transfer
 - RAT finder

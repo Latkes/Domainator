@@ -18,10 +18,9 @@ class Domainator:
         if '://' in arg:
             parsed = urlsplit(arg)
         else:
-            self.scheme = 'http'
-            parsed = urlsplit(self.scheme + '://' + arg)
+            parsed = urlsplit('http://' + arg)
 
-        if not parsed.netloc and '.' not in parsed.path:
+        if '.' not in parsed.netloc:
             pr('Invalid domain!', '!')
             exit()
 
@@ -125,19 +124,19 @@ class Domainator:
         print("{}{:<62}| {:<50}".format(fc, "URL", "STATUS"))
         with open('./src/subdomains') as f:
             subdomains = f.readlines()
-        try:
-            for sub in subdomains:
-                url = self.pack_url(subdomain=sub.strip())
-                try:
-                    res = REQ_S.get(url)
-                    if res.status_code != 404:
-                        if res.status_code == 200:
-                            self.known_subdomains.add(f'{sub.strip()}.{self.domain}')
-                        print("{}{:<62}| {:<50}".format(fg, url, res.status_code))
-                except:
-                    print("{}{:<62}| {:<50}".format(fr, url, 'ERROR'))
-        except KeyboardInterrupt:
-            pass
+        for sub in subdomains:
+            url = self.pack_url(subdomain=sub.strip())
+            try:
+                res = REQ_S.get(url)
+                if res.status_code != 404:
+                    if res.status_code == 200:
+                        self.known_subdomains.add(f'{sub.strip()}.{self.domain}')
+                    print("{}{:<62}| {:<50}".format(fg, url, res.status_code))
+            except KeyboardInterrupt:
+                pr('Scan stopped!', '!')
+                break
+            except:
+                print("{}{:<62}| {:<50}".format(fr, url, 'ERROR'))
 
     def speed_check(self):
         import time
@@ -165,7 +164,7 @@ class Domainator:
                 pr('Bad status code: %d' % res.status_code, '!')
                 return
             bs = bs4.BeautifulSoup(res.content, 'html.parser')
-            result = bs.find_all('pre', {'class': 'df-raw'})[0].text
+            result = bs.find_all('pre', {'class': 'df-raw'})[0].decode_contents()
             print(f"\n{fc + result + fx}")
         except requests.exceptions.RequestException:
             from traceback import print_exc

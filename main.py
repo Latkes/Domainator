@@ -15,8 +15,6 @@ def passive_menu(sb: Domainator):
         elif cc == 0:
             sb.whois()
         elif cc == 1:
-            sb.banners_cloud_flare()
-        elif cc == 2:
             while 1:
                 ccc = choose(['HackerTarget', 'YouGetSignal'], 'Choose method:')
                 if ccc < 0:

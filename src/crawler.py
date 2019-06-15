@@ -25,18 +25,13 @@ class Crawler:
             c = choose(['Emails', 'External Resources', 'Known Paths', 'Crawled Paths'])
             if c < 0:
                 break
-            elif c == 0:
-                for x in self.emails:
-                    pr(x, '#')
-            elif c == 1:
-                for x in self.external_res:
-                    pr(x, '#')
-            elif c == 2:
-                for x in self.known_paths:
-                    pr(x, '#')
-            elif c == 3:
-                for x in self.crawled_paths:
-                    pr(x, '#')
+            else:
+                li = (self.emails, self.external_res,
+                      self.known_paths, self.crawled_paths)[c]
+                if not li:
+                    pr('Nothing to show yet!', '!')
+                for i in li:
+                    pr(i, '#')
 
     def menu(self):
         while 1:
@@ -50,7 +45,10 @@ class Crawler:
             elif c == 0:
                 self.show_menu()
             elif c == 1:
-                self.google()
+                try:
+                    self.google()
+                except KeyboardInterrupt:
+                    pr('Stopped!', '!')
             elif c == 2:
                 # TODO Threading
                 # threads = []

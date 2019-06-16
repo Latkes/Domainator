@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
 
-from .utils import *
+from utils import pr, choose, ask, fc, fx, fy, REQ_S
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +22,8 @@ class Crawler:
 
     def show_menu(self):
         while 1:
-            c = choose(['Emails', 'External Resources', 'Known Paths', 'Crawled Paths'])
+            c = choose(['Emails', 'External Resources',
+                        'Known Paths', 'Crawled Paths'])
             if c < 0:
                 break
             else:
@@ -39,7 +40,8 @@ class Crawler:
             pr(f'External resources: {fc}{len(self.external_res)}')
             pr(f'Internal known paths: {fc}{len(self.known_paths)}')
             pr(f'Crawled paths: {fc}{len(self.crawled_paths)}')
-            c = choose(['Show', 'Google Crawl', 'BS Crawl'], 'Choose crawling engine')
+            c = choose(['Show', 'Google Crawl', 'BS Crawl'],
+                       'Choose crawling engine')
             if c < 0:
                 break
             elif c == 0:
@@ -97,13 +99,13 @@ class Crawler:
                 # print(l)
                 ls = urlsplit('http://' + l.span.decode_contents())
                 if self.sb.domain not in ls.netloc:
-                    pr('Wrong domain found: ' + fy + ls.path, '!')
+                    pr('Wrong domain found: ' + fy + ls.path + fx, '!')
                     continue
 
                 pts = ls.netloc.split('.')
                 if len(pts) > 2:
                     if ls.netloc not in self.sb.known_subdomains:
-                        pr('Found new subdomain: ' + fc + ls.netloc)
+                        pr('Found new subdomain: ' + fc + ls.netloc + fx)
                         continue
 
                 if ls.path not in self.known_paths:
@@ -129,7 +131,7 @@ class Crawler:
 
         il = xl = 0
         soup = BeautifulSoup(res.content, 'html.parser')
-        ### Links are in ['a', 'link', 'img', 'svg', 'iframe', 'embed', 'audio']
+        # Links are in ['a', 'link', 'img', 'svg', 'iframe', 'embed', 'audio']
         for k, v in {'a': 'href',
                      'link': 'href',
                      'iframe': 'src',
@@ -138,8 +140,9 @@ class Crawler:
                 try:
                     x = l[v].lower()
                 except KeyError:
-                    log.info(f'page: "{page}" KeyError : No link found in "{k}" element')
-                    pr(f'page: "{page}" KeyError : No link found in "{k}" element', '!')
+                    i = f'"{page}" KeyError: No link found in "{k}" element'
+                    log.info(i)
+                    pr(i, '!')
                     continue
                 if x.startswith('#'):
                     continue

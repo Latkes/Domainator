@@ -24,12 +24,6 @@ fb = Fore.BLUE
 fy = Fore.YELLOW
 
 
-def parse_arg() -> str:
-    if len(sys.argv) > 1:
-        return sys.argv[1]
-    return ask('Enter domain:')
-
-
 def clear():
     import os
     if 'win' in sys.platform.lower():
@@ -52,9 +46,9 @@ def pr(text: str, notation: str = '+'):
     print(f'{x}[{notation}]{fx} ' + text)
 
 
-def choose(options: iter = ('Yes', 'No'), prompt: str = 'Choose action:', default: int = -1) -> int:
+def choose(options: iter, prompt: str = 'Choose action:', default: int = -1) -> int:
     if not options:
-        raise ValueError(" [!] No options passed to choice() !!!")  # No options
+        raise ValueError(" [!] No options passed to choice() !!!")
     pr(prompt, '?')
     for index, option in enumerate(options):
         line = '\t'

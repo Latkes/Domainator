@@ -1,25 +1,31 @@
 import re
+import sys
 import socket
-from urllib.parse import *
+from urllib.parse import urlsplit, urlunsplit
 
 import bs4
 import requests
 
-from .crawler import Crawler
-from .utils import *
+from crawler import Crawler
+from utils import REQ_S, pr, choose, pause, ask, fc, fx, fr
 
 
 class Domainator:
 
     def __init__(self):
+        # Parse arguemnts
+        if len(sys.argv) > 1:
+            arg = sys.argv[1]
+        else:
+            arg = ask('Enter domain:')
+            if not arg:
+                exit()
 
         # Verify domain integrity
-        arg = parse_arg()
         if '://' in arg:
             parsed = urlsplit(arg)
         else:
             parsed = urlsplit('http://' + arg)
-
         if '.' not in parsed.netloc:
             pr('Invalid domain!', '!')
             exit()
@@ -27,9 +33,9 @@ class Domainator:
         self.domain = parsed.netloc
         self.scheme = parsed.scheme if parsed.scheme else 'http'
         print()
-        pr('Using domain: ' + fc + self.domain)
+        pr('Using domain: ' + fc + self.domain + fx)
 
-        self.known_subdomains = set()
+        self.known_subdomains = set() # TODO make use of it
         self.crawler = Crawler(self, parsed.path)
 
         # self.ip = IPv4Address(socket.gethostbyname(self.domain))
@@ -74,7 +80,7 @@ class Domainator:
         if "cloudflare" not in res.text.lower():
             if real_ip:
                 pr("#", "Cloudflare Bypassed!")
-                pr("+", "Real IP ==> " + fb + real_ip)
+                pr("+", "Real IP ==> " + fc + real_ip + fx)
             return real_ip
         else:
             pr("Cloudflare wasn't bypassed, Real IP blocked by CloudFlare", '!')
@@ -87,7 +93,7 @@ class Domainator:
             return
         lst = res.text.strip().split("\n")
 
-        fn = f'./{self.domain}-reverseHT'
+        fn = f'./reverseip/ht-{self.domain}'
         with open(fn, 'w') as f:
             for l in lst:
                 if l:
@@ -96,7 +102,7 @@ class Domainator:
         print()
         pr(f'Dumped {len(lst)} entries to "{fn}"\n')
 
-    def reverse_YGS(self):
+    def reverse_YGS(self): # TODO record to file
         url = "https://domains.yougetsignal.com/domains.php"
         data = {
             'remoteAddress': self.domain,
@@ -130,13 +136,14 @@ class Domainator:
                 res = REQ_S.get(url)
                 if res.status_code != 404:
                     if res.status_code == 200:
-                        self.known_subdomains.add(f'{sub.strip()}.{self.domain}')
+                        self.known_subdomains.add(
+                            f'{sub.strip()}.{self.domain}')
                     print("{}{:<62}| {:<50}".format(fg, url, res.status_code))
             except KeyboardInterrupt:
                 pr('Scan stopped!', '!')
                 break
             except:
-                print("{}{:<62}| {:<50}".format(fr, url, 'ERROR'))
+                print("{}{:<62}| {:<50}{}".format(fr, url, 'ERROR', fx))
 
     def speed_check(self):
         import time
@@ -164,7 +171,8 @@ class Domainator:
                 pr('Bad status code: %d' % res.status_code, '!')
                 return
             bs = bs4.BeautifulSoup(res.content, 'html.parser')
-            result = bs.find_all('pre', {'class': 'df-raw'})[0].decode_contents()
+            result = bs.find_all(
+                'pre', {'class': 'df-raw'})[0].decode_contents()
             print(f"\n{fc + result + fx}")
         except requests.exceptions.RequestException:
             from traceback import print_exc

@@ -2,9 +2,9 @@
 import logging
 
 from src.domainator import Domainator
-from src.utils import *
+from src.utils import pr, choose
 
-logging.basicConfig(filename='log.log', filemode='w', level=logging.DEBUG)
+logging.basicConfig(filename='./logs/log.log', filemode='w', level=logging.DEBUG)
 
 
 def passive_menu(sb: Domainator):

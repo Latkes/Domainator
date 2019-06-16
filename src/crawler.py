@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from src.utils import pr, choose, ask, fc, fx, fy, REQ_S
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Crawler:
@@ -71,7 +71,7 @@ class Crawler:
                         page = list(self.known_paths - self.crawled_paths)
                         if not page:
                             pr('No crawlable pages!', '!')
-                            continue
+                            break
 
                         page = choice(page)
                         if page in self.crawled_paths:
@@ -118,12 +118,12 @@ class Crawler:
         res = REQ_S.get(url)
         if res.status_code == 404:
             i = f'page: "{page}" is 404'
-            log.info(i)
+            logger.info(i)
             pr(i, '!')
             return
         elif res.status_code != 200:
             i = f'page returned code "{res.status_code}" <=> "{page}" '
-            log.info(i)
+            logger.info(i)
             pr(i, '!')
             return
 
@@ -139,7 +139,7 @@ class Crawler:
                     x = l[v].lower()
                 except KeyError:
                     i = f'"{page}" KeyError: No link found in "{k}" element'
-                    log.info(i)
+                    logger.info(i)
                     pr(i, '!')
                     continue
                 if x.startswith('#'):

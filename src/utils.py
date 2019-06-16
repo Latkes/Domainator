@@ -32,7 +32,7 @@ def clear():
         os.system('clear')
 
 
-def pr(text: str, notation: str = '+'):
+def pr(text: str, notation: str = '+', end='\n'):
     x = fg
     if notation == '#':
         x = fc
@@ -43,7 +43,7 @@ def pr(text: str, notation: str = '+'):
     elif notation == '?':
         x = fb
 
-    print(f'{x}[{notation}]{fx} ' + text)
+    print(f'{x}[{notation}]{fx} ' + text, end=end)
 
 
 def choose(options: iter, prompt: str = 'Choose action:', default: int = -1) -> int:
@@ -59,7 +59,8 @@ def choose(options: iter, prompt: str = 'Choose action:', default: int = -1) -> 
         line += option
         print(fy + line + fx)
     try:
-        ans = input(fy + '[>>>] ' + fx)
+        print(fy + '[>>>] ' + fx, end='')
+        ans = input()
         if not ans:
             return default
         ans = int(ans)
@@ -74,8 +75,8 @@ def choose(options: iter, prompt: str = 'Choose action:', default: int = -1) -> 
 
 
 def ask(question: str) -> (None, str):
-    pr(question, '?')
-    answer = input('>')
+    pr(question + f'\n{fy}[>>>] {fx}', '?', end='')
+    answer = input()
     if answer == '':
         return None
     try:
@@ -88,7 +89,7 @@ def ask(question: str) -> (None, str):
 def pause(reason: str, cancel: bool = False):
     s = f'Press {fc}[ENTER]{fx} to ' + reason
     if cancel:
-        s += ', %s to cancel' % fr + '[^C]' + fx
+        s += f', {fr}[^C]{fx} to cancel'
     pr(s, '?')
 
     try:

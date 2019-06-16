@@ -7,28 +7,31 @@ from src.utils import pr, choose
 
 if not os.path.isdir('./logs'):
     os.mkdir('./logs')
-logging.basicConfig(filename='./logs/log.log', filemode='w', level=logging.DEBUG)
+logging.basicConfig(filename='./logs/log.log',
+                    filemode='w', level=logging.DEBUG)
+logger = logging.getLogger('chardet.charsetprober')
+logger.setLevel(logging.INFO)
 
-
-def passive_menu(sb: Domainator):
+def passive_menu(dom: Domainator):
     while 1:
         cc = choose(['Whois Lookup', 'Reverse IP Lookup'])
         if cc < 0:
             break
         elif cc == 0:
-            sb.whois()
+            dom.whois()
         elif cc == 1:
             while 1:
-                ccc = choose(['HackerTarget', 'YouGetSignal'], 'Choose method:')
+                ccc = choose(['HackerTarget', 'YouGetSignal'],
+                             'Choose method:')
                 if ccc < 0:
                     break
                 elif ccc == 0:
-                    sb.reverse_HT()
+                    dom.reverse_HT()
                 elif ccc == 1:
-                    sb.reverse_YGS()
+                    dom.reverse_YGS()
 
 
-def active_menu(sb: Domainator):
+def active_menu(dom: Domainator):
     while 1:
         cc = choose(
             ['Grab Headers & CloudFlare', 'Site Speed Check',
@@ -36,24 +39,24 @@ def active_menu(sb: Domainator):
         if cc < 0:
             break
         if cc == 0:
-            sb.banners_cloud_flare()
+            dom.banners_cloud_flare()
         elif cc == 1:
-            sb.speed_check()
+            dom.speed_check()
         elif cc == 2:
-            sb.find_subdomains()
+            dom.find_subdomains()
         elif cc == 3:
-            sb.crawler.menu()
+            dom.crawler.menu()
 
 
-def main_menu(sb: Domainator):
+def main_menu(dom: Domainator):
     while 1:
-        c = choose(['Passive', 'Active'])
+        c = choose(['Passive', 'Active'], 'Choose category:')
         if c < 0:
             break
         if c == 0:
-            passive_menu(sb)
+            passive_menu(dom)
         if c == 1:
-            active_menu(sb)
+            active_menu(dom)
 
 
 if __name__ == '__main__':

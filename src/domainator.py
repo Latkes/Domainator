@@ -31,19 +31,33 @@ class Domainator:
             pr('Invalid domain!', '!')
             exit()
 
+        # Verify subdomain
+        self.subdomain = self.base_domain = None
+        pts = parsed.netloc.split('.')
+        if len(pts) > 2:
+            pr('Is this the subdomain you wish to use:? ' + pts[0])
+            if pause('agree', cancel=True):  # subdomain
+                self.subdomain = pts[0]
+                self.base_domain = '.'.join(pts[1:])
+        if not self.subdomain:
+            self.subdomain = 'www'
+        if not self.base_domain:
+            self.base_domain = parsed.netloc
+
         self.domain = parsed.netloc
         self.scheme = parsed.scheme if parsed.scheme else 'http'
         print()
         pr('Using domain: ' + fc + self.domain + fx)
 
-        self.known_subdomains = set()  # TODO make use of it
         self.crawler = Crawler(self, parsed.path)
 
         # self.ip = IPv4Address(socket.gethostbyname(self.domain))
         # pr('Host resolved: ' + cl.c + str(self.ip))
 
-    def pack_url(self, subdomain='www', path=''):
-        return urlunsplit((self.scheme, subdomain + '.' + self.domain, path, '', ''))
+    def pack_url(self, subdomain=None, path=''):
+        if not subdomain:
+            subdomain = self.subdomain
+        return urlunsplit((self.scheme, subdomain + '.' + self.base_domain, path, '', ''))
 
     def banners_cloud_flare(self):
         pr('Retrieving headers', '#')
@@ -63,7 +77,7 @@ class Domainator:
             pr(self.domain + " is not using Cloudflare!")
             return
 
-        if not pause('Attempt to bypass?'):
+        if not pause('Attempt to bypass?', cancel=True):
             return
         pr("CloudFlare found, attempting to bypass..")
 
@@ -132,23 +146,24 @@ class Domainator:
             pr(x, '#')
 
     def find_subdomains(self):
-        print("{}{:<62}| {:<50}".format(fc, "URL", "STATUS"))
+        print("{}{:<62}| {:<50}{}".format(fc, "URL", "STATUS", fx))
         with open('./src/subdomains') as f:
-            subdomains = f.readlines()
-        for sub in subdomains:
-            url = self.pack_url(subdomain=sub.strip())
-            try:
-                res = REQ_S.get(url)
-                if res.status_code != 404:
-                    if res.status_code == 200:
-                        self.known_subdomains.add(
-                            f'{sub.strip()}.{self.domain}')
-                    print("{}{:<62}| {:<50}".format(fg, url, res.status_code))
-            except KeyboardInterrupt:
-                pr('Scan stopped!', '!')
-                break
-            except:
-                print("{}{:<62}| {:<50}{}".format(fr, url, 'ERROR', fx))
+            for sub in f:
+                if sub == self.subdomain:
+                    continue
+
+                sub = sub.strip()
+                url = self.pack_url(subdomain=sub)
+                try:
+                    res = REQ_S.get(url)
+                    if res.status_code != 404:
+                        print("{}{:<62}| {:<50}{}".format(
+                            fg, url, res.status_code, fx))
+                except KeyboardInterrupt:
+                    pr('Scan stopped!', '!')
+                    break
+                except:
+                    print("{}{:<62}| {:<50}{}".format(fr, url, 'ERROR', fx))
 
     def speed_check(self):
         import time

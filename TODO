@@ -8,7 +8,6 @@ FIX / Improve:
 - Multithread crawling
 
 New features:
-- Global subdomain variable
 - DNS Records
 - Zone transfer
 - RAT finder

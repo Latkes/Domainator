@@ -7,8 +7,8 @@ from urllib.parse import urlsplit, urlunsplit
 import bs4
 import requests
 
-from crawler import Crawler
-from utils import REQ_S, pr, choose, pause, ask, fc, fx, fr
+from src.crawler import Crawler
+from src.utils import REQ_S, pr, choose, pause, ask, fc, fx, fr
 
 
 class Domainator:

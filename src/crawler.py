@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
 
-from utils import pr, choose, ask, fc, fx, fy, REQ_S
+from src.utils import pr, choose, ask, fc, fx, fy, REQ_S
 
 log = logging.getLogger(__name__)
 
@@ -26,13 +26,12 @@ class Crawler:
                         'Known Paths', 'Crawled Paths'])
             if c < 0:
                 break
-            else:
-                li = (self.emails, self.external_res,
-                      self.known_paths, self.crawled_paths)[c]
-                if not li:
-                    pr('Nothing to show yet!', '!')
-                for i in li:
-                    pr(i, '#')
+            li = (self.emails, self.external_res,
+                  self.known_paths, self.crawled_paths)[c]
+            if not li:
+                pr('Nothing to show yet!', '!')
+            for i in li:
+                pr(i, '#')
 
     def menu(self):
         while 1:
@@ -44,7 +43,7 @@ class Crawler:
                        'Choose crawling engine')
             if c < 0:
                 break
-            elif c == 0:
+            if c == 0:
                 self.show_menu()
             elif c == 1:
                 try:
@@ -103,10 +102,9 @@ class Crawler:
                     continue
 
                 pts = ls.netloc.split('.')
-                if len(pts) > 2:
-                    if ls.netloc not in self.sb.known_subdomains:
-                        pr('Found new subdomain: ' + fc + ls.netloc + fx)
-                        continue
+                if len(pts) > 2 and ls.netloc not in self.sb.known_subdomains:
+                    pr('Found new subdomain: ' + fc + ls.netloc + fx)
+                    continue
 
                 if ls.path not in self.known_paths:
                     self.known_paths.add(ls.path)
@@ -146,10 +144,11 @@ class Crawler:
                     continue
                 if x.startswith('#'):
                     continue
-                if x.startswith('/'):
-                    x = url + x
                 if x.endswith('.ico'):
                     continue
+                
+                if x.startswith('/'):
+                    x = url + x
 
                 if re.match(r'[^@]+@[^@]+\.[^@]+', x):  # Email
                     if x not in self.emails:

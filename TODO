@@ -5,10 +5,8 @@
 FIX / Improve:
 - More exception handling
 - More logging
-- Multithread crawling
 
 New features:
 - DNS Records
 - Zone transfer
 - RAT finder
-- admin panel finder

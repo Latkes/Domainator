@@ -51,35 +51,16 @@ class Crawler:
                 except KeyboardInterrupt:
                     pr('Stopped!', '!')
             elif c == 2:
-                # TODO Threading
-                # threads = []
-                # while 1:
-                #     print('SOMETHING1')
-                #     a = list(self.known_paths - self.crawled)
-                #     if len(threads) < 8:
-                #         if len(a) > 1:
-                #             p = Thread(target=self.links())
-                #             p.start()
-                #             threads.append(p)
-                #     p = Thread(target=self.links())
-                #     p.start()
-                #     threads.append(p)
-                #     print('SOMETHING')
-                #     sleep(0.5)
                 try:
                     while 1:
-                        page = list(self.known_paths - self.crawled_paths)
-                        if not page:
+                        avail = list(self.known_paths - self.crawled_paths)
+                        if not avail:
                             pr('No crawlable pages!', '!')
                             break
-
-                        page = choice(page)
-                        if page in self.crawled_paths:
-                            print('Crawled crawled!!!!!!')
-                            exit()
-
+                        page = choice(avail)
                         self.crawl(page)
                         self.crawled_paths.add(page)
+
                 except KeyboardInterrupt:
                     pr('Crawling stopped', '!')
 
@@ -146,7 +127,7 @@ class Crawler:
                     continue
                 if x.endswith('.ico'):
                     continue
-                
+
                 if x.startswith('/'):
                     x = url + x
 

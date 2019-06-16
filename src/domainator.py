@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 import socket
@@ -35,7 +36,7 @@ class Domainator:
         print()
         pr('Using domain: ' + fc + self.domain + fx)
 
-        self.known_subdomains = set() # TODO make use of it
+        self.known_subdomains = set()  # TODO make use of it
         self.crawler = Crawler(self, parsed.path)
 
         # self.ip = IPv4Address(socket.gethostbyname(self.domain))
@@ -93,7 +94,11 @@ class Domainator:
             return
         lst = res.text.strip().split("\n")
 
-        fn = f'./reverseip/ht-{self.domain}'
+        reverse_dir = './reverseip'
+        if not os.path.isdir(reverse_dir):
+            os.mkdir(reverse_dir)
+
+        fn = os.path.join(reverse_dir, f'ht-{self.domain}')
         with open(fn, 'w') as f:
             for l in lst:
                 if l:
@@ -102,7 +107,7 @@ class Domainator:
         print()
         pr(f'Dumped {len(lst)} entries to "{fn}"\n')
 
-    def reverse_YGS(self): # TODO record to file
+    def reverse_YGS(self):  # TODO record to file
         url = "https://domains.yougetsignal.com/domains.php"
         data = {
             'remoteAddress': self.domain,

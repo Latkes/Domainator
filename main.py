@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+import os
 import logging
 
 from src.domainator import Domainator
 from src.utils import pr, choose
 
+if not os.path.isdir('./logs'):
+    os.mkdir('./logs')
 logging.basicConfig(filename='./logs/log.log', filemode='w', level=logging.DEBUG)
 
 

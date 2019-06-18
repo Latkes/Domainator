@@ -1,14 +1,14 @@
 import os
 import re
-import sys
 import socket
+import sys
 from urllib.parse import urlsplit, urlunsplit
 
 import bs4
 import requests
 
 from src.crawler import Crawler
-from src.utils import REQ_S, pr, choose, pause, ask, fc, fx, fr
+from src.utils import REQ_S, pr, pause, ask, fc, fx, fr, fg
 
 
 class Domainator:
@@ -94,11 +94,12 @@ class Domainator:
         res = REQ_S.get(f"http://{real_ip}")
         if "cloudflare" not in res.text.lower():
             if real_ip:
-                pr("#", "Cloudflare Bypassed!")
-                pr("+", "Real IP ==> " + fc + real_ip + fx)
-            return real_ip
-        else:
-            pr("Cloudflare wasn't bypassed, Real IP blocked by CloudFlare", '!')
+                pr("Cloudflare Bypassed!", '#')
+                pr('===============================')
+                pr("Real IP ==> " + fc + real_ip + fx)
+                pr('===============================')
+            return
+        pr("Cloudflare wasn't bypassed, Real IP blocked by CloudFlare", '!')
 
     def reverse_HT(self):
         url = "http://api.hackertarget.com/reverseiplookup/?q=" + self.domain
@@ -197,3 +198,25 @@ class Domainator:
         except requests.exceptions.RequestException:
             from traceback import print_exc
             print_exc()
+
+    def find_panels(self):
+        pr("Searching for admin panels", '#')
+        pth_lst = (
+            'admin/', 'site/admin', 'admin.php/', 'up/admin/', 'central/admin/', 'whm/admin/', 'whmcs/admin/',
+            'support/admin/', 'upload/admin/', 'video/admin/', 'shop/admin/', 'shoping/admin/', 'wp-admin/',
+            'wp/wp-admin/', 'blog/wp-admin/', 'admincp/', 'admincp.php/', 'vb/admincp/', 'forum/admincp/',
+            'up/admincp/', 'administrator/', 'administrator.php/', 'joomla/administrator/', 'jm/administrator/',
+            'site/administrator/', 'install/', 'vb/install/', 'dimcp/', 'clientes/', 'admin_cp/', 'login/', 'login.php',
+            'site/login', 'site/login.php', 'up/login/', 'up/login.php', 'cp.php', 'up/cp', 'cp', 'master', 'adm',
+            'member', 'control', 'webmaster', 'myadmin', 'admin_cp', 'admin_site')
+
+        try:
+            for i in range(len(pth_lst)):
+                pth = pth_lst[i]
+                res = requests.get(self.pack_url(path=pth))
+                n = '!'
+                if res.status_code == 200:
+                    n = '+'
+                pr(f'({i}/{len(pth_lst)}) "{pth}" code: {fg if res.status_code == 200 else fx}{res.status_code}{fx}', n)
+        except requests.exceptions.ConnectionError:
+            pr("Couldn't connect!", '!')

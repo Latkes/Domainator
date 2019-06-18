@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import os
 import logging
+import os
 
 from src.domainator import Domainator
 from src.utils import pr, choose
@@ -11,6 +11,7 @@ logging.basicConfig(filename='./logs/log.log',
                     filemode='w', level=logging.DEBUG)
 logger = logging.getLogger('chardet.charsetprober')
 logger.setLevel(logging.INFO)
+
 
 def passive_menu(dom: Domainator):
     while 1:
@@ -35,7 +36,7 @@ def active_menu(dom: Domainator):
     while 1:
         cc = choose(
             ['Grab Headers & CloudFlare', 'Site Speed Check',
-             'Sub-domains Scan', 'Crawler'])
+             'Sub-domains Scan', 'Links Crawler', 'Admin Panel Search'])
         if cc < 0:
             break
         if cc == 0:
@@ -46,6 +47,8 @@ def active_menu(dom: Domainator):
             dom.find_subdomains()
         elif cc == 3:
             dom.crawler.menu()
+        elif cc == 4:
+            dom.find_panels()
 
 
 def main_menu(dom: Domainator):
